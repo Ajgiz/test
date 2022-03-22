@@ -12,7 +12,6 @@ export const ContentModal: React.FC<ContentModalProps> = ({
   setPhone,
   typeMod,
   errorValidate,
-  selectContact,
 }) => {
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -27,9 +26,6 @@ export const ContentModal: React.FC<ContentModalProps> = ({
       {typeMod === TypeModal.add || typeMod === TypeModal.update ? (
         <div className="modal__form">
           <TextField
-            placeholder={
-              typeMod === TypeModal.update ? selectContact?.username : ""
-            }
             error={!!errorValidate}
             value={name}
             onChange={handleChangeName}
@@ -39,9 +35,6 @@ export const ContentModal: React.FC<ContentModalProps> = ({
             label={typeMod !== TypeModal.update ? "Имя" : ""}
           />
           <TextField
-            placeholder={
-              typeMod === TypeModal.update ? selectContact?.phone : ""
-            }
             value={phone}
             onChange={handleChangePhone}
             fullWidth

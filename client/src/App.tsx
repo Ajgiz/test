@@ -9,6 +9,8 @@ import { Error } from "./components/Error";
 import { ContactItem } from "./components/ContactItem";
 import { Loaders } from "./components/Loaders";
 import { Modal } from "./components/modal/Modal";
+import { observer } from "mobx-react-lite";
+import Contact from "./store/Contact";
 
 export enum TypeModal {
   remove = "remove",
@@ -16,7 +18,7 @@ export enum TypeModal {
   update = "update",
 }
 
-function App() {
+const App = observer(() => {
   const [typeModal, setTypeModal] = React.useState<TypeModal | null>(null);
   const [selectContact, setSelectContact] = React.useState<IContact | null>(
     null
@@ -24,31 +26,23 @@ function App() {
   const [page, setPage] = React.useState(1);
   const [contacts, setContacts] = React.useState<IContact[]>([]);
   const [stateLoad, setStateLoad] = React.useState(true);
-  const [allContacts, setAllContacts] = React.useState<IContact[]>([]);
-
-  const [error, loaded, fetch] = useFetch(async () => {
-    const response = await request.get<IContact[]>("/");
-    setAllContacts(response.data);
-  });
-
   React.useEffect(() => {
-    debugger
-    if (allContacts.length) {
+    if (Contact.contacts.length) {
       const arr: IContact[] = [];
-      allContacts.forEach((item, index) => {
+      Contact.contacts.forEach((item, index) => {
         if (index < page * 10) {
           arr.push(item);
         }
       });
-      if (allContacts.length === arr.length) {
+      if (Contact.contacts.length === arr.length) {
         setStateLoad(false);
       }
       setContacts(arr);
     }
-  }, [page, allContacts]);
+  }, [page, Contact.contacts, Contact.contacts.length]);
 
   React.useEffect(() => {
-    fetch();
+    Contact.fetch();
   }, []);
 
   const handleChangePage = () => {
@@ -63,8 +57,6 @@ function App() {
     <div className="App">
       {typeModal !== null && (
         <Modal
-          contacts={allContacts}
-          setContacts={setAllContacts}
           typeModal={typeModal}
           selectContact={selectContact}
           setTypeModal={setTypeModal}
@@ -82,11 +74,11 @@ function App() {
           </Button>
         </div>
         <div className="App__list-contact">
-          {error ? (
+          {Contact.errorFetch ? (
             <div className="App__center">
-              <Error message={error} />
+              <Error message={Contact.errorFetch} />
             </div>
-          ) : loaded ? (
+          ) : Contact.loaded ? (
             contacts.map((item) => {
               return (
                 <ContactItem
@@ -117,6 +109,6 @@ function App() {
       </div>
     </div>
   );
-}
+});
 
 export default App;

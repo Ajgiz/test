@@ -8,5 +8,5 @@ export interface ContentModalProps {
     setPhone: React.Dispatch<React.SetStateAction<string>>;
     typeMod: TypeModal;
     errorValidate: string | null;
-    selectContact: IContact | null;
+
 }
